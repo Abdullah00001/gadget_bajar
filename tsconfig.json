@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    // --- File Layout ---
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // --- Environment Settings (Modern Node/Express) ---
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
+    // --- Alias/Path Settings ---
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    },
+    "typeRoots": ["./src/types/", "./node_modules/@types"],
+    "types": ["node", "express"],
+
+    // --- Other Outputs ---
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // --- Strictness (MUST HAVE) ---
+    "strict": true,
+    "isolatedModules": true, // Recommended for Babel/TS-Node
+    // "verbatimModuleSyntax": true, // Stronger module checking
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true, // Speeds up compilation
+
+    // --- Strictness (Extra Safety) ---
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedSideEffectImports": true, // Great for catching unused imports
+
+    // --- Style & Code Quality (Recommended to Enable) ---
+    "noImplicitReturns": true, // 🔥 Recommended
+    "noUnusedLocals": true, // 🔥 Recommended
+    "noUnusedParameters": true, // 🔥 Recommended
+    "noFallthroughCasesInSwitch": true, // 🔥 Recommended
+    // "noImplicitOverride": true, // Enable if your TS version supports it
+
+    // --- Interop/Module Handling ---
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleDetection": "force"
+  },
+  "include": ["./src/**/*.ts", "src/queue/jobs"],
+  "exclude": ["node_modules", "/scripts", "/dist"]
+}

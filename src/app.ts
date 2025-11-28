@@ -1,0 +1,40 @@
+import express, { type Express, type Request, type Response } from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import { morganMessageFormat, streamConfig } from '@/configs/morgan.configs';
+import corsConfiguration from './configs/cors.configs';
+import { globalErrorMiddleware } from './middlewares/globalError.middleware';
+
+const app: Express = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(helmet());
+app.use(cookieParser());
+app.use(cors(corsConfiguration));
+app.use(
+  morgan(morganMessageFormat, {
+    stream: {
+      write: (message: string) => streamConfig(message),
+    },
+  })
+);
+
+// Health Route
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({ message: 'Server Is Running' });
+});
+// Route Not Found
+app.use((req: Request, res: Response) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+    error: `Cannot ${req.method} ${req.originalUrl}`,
+  });
+});
+// Global Error Middleware
+app.use(globalErrorMiddleware);
+
+export default app;

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import app from '@/app';
 import { connectDatabase, disconnectDatabase } from '@/configs/database.config';
 import { disconnectRedis } from '@/configs/redis.config';
+import { closeSocket, initializeSocket } from '@/configs/socket.configs';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const server = http.createServer(app);
 
 async function main() {
   try {
+    initializeSocket(server);
     await connectDatabase();
     server.listen(PORT, () => {
       console.log('Server Running On Port 5000');
@@ -29,6 +31,7 @@ async function gracefulShutdown(signal: string) {
   server.close(async () => {
     console.log('HTTP server closed');
     try {
+      await closeSocket();
       await disconnectDatabase();
       await disconnectRedis();
       console.log('All services are disconnected');

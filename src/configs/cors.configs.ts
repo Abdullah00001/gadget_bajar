@@ -18,4 +18,20 @@ const corsConfiguration: CorsOptions = {
   optionsSuccessStatus: 200,
 };
 
+export const socketCorsConfiguration: CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || corsWhiteList.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      logger.warn(`Blocked CORS request from origin: ${origin}`);
+      callback(new Error('CORS not allowed'), false);
+    }
+  },
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 200,
+};
+
 export default corsConfiguration;

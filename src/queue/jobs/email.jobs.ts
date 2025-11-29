@@ -9,6 +9,13 @@ const EmailQueueJobs = {
       backoff: { type: 'exponential', delay: 3000 },
     });
   },
+  addVerifyUserAccountEmailToQueue: async (data: { email: string }) => {
+    await EmailQueue.add('send-verify-user-account-notification-email', data, {
+      attempts: 3,
+      removeOnComplete: true,
+      backoff: { type: 'exponential', delay: 3000 },
+    });
+  },
 };
 
 export default EmailQueueJobs;

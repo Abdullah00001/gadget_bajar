@@ -10,7 +10,8 @@ import EmailQueueJobs from '@/queue/jobs/email.jobs';
 
 const { hashPassword } = PasswordUtils;
 const { calculateMilliseconds } = CalculationUtils;
-const { addSendSignupOtpEmailToQueue } = EmailQueueJobs;
+const { addSendSignupOtpEmailToQueue, addVerifyUserAccountEmailToQueue } =
+  EmailQueueJobs;
 
 const AuthServices = {
   processSignup: async ({ email, name, password }: TSignupPayload) => {
@@ -41,6 +42,18 @@ const AuthServices = {
         }),
       ]);
       return newUser;
+    } catch (error) {
+      if (error instanceof Error) throw error;
+      throw new Error('Unknown error occurred in signup service');
+    }
+  },
+  processVerifyUser: async ({ email }: { email: string }) => {
+    try {
+      await prisma.user.update({
+        where: { email },
+        data: { accountStatus: true },
+      });
+      await addVerifyUserAccountEmailToQueue({ email });
     } catch (error) {
       if (error instanceof Error) throw error;
       throw new Error('Unknown error occurred in signup service');

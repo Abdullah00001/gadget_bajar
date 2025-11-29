@@ -8,6 +8,13 @@ export const signupSchema = z.object({
 
 export type TSignupPayload = z.infer<typeof signupSchema>;
 
+export const verifySignupUserSchema = z.object({
+  email: z.email(),
+  otp: z.string().min(6).max(6),
+});
+
+export type TVerifySignUser = z.infer<typeof verifySignupUserSchema>;
+
 export const loginSchema = z.object({
   email: z.email(),
   password: z.string().min(8),

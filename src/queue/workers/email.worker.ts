@@ -3,6 +3,7 @@ import mailTransporter from '@/configs/nodemailer.configs';
 // import mailTransporter from '@/configs/nodemailer.configs';
 import redisClient from '@/configs/redis.config';
 import signupOtpTemplate from '@/templates/signupOtpTemplate';
+import verifySignupUserTemplate from '@/templates/verifySignupUserTemplate';
 import { TSignupOtpEmail } from '@/types/email.job.types';
 import mailOption from '@/utils/mailOption.utils';
 // import mailOption from '@/utils/mailOption.utils';
@@ -21,6 +22,19 @@ const worker = new Worker(
         const personalizedTemplate = template({ expireAt, otp });
         await mailTransporter.sendMail(
           mailOption(email, 'Email Verification Required', personalizedTemplate)
+        );
+        return;
+      }
+      if (name === 'send-verify-user-account-notification-email') {
+        const { email } = data as { email: string };
+        const template = Handlebars.compile(verifySignupUserTemplate);
+        const personalizedTemplate = template({});
+        await mailTransporter.sendMail(
+          mailOption(
+            email,
+            'Account verification successful',
+            personalizedTemplate
+          )
         );
         return;
       }

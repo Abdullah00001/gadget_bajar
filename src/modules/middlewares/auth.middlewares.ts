@@ -1,4 +1,6 @@
 import prisma from '@/configs/database.config';
+import redisClient from '@/configs/redis.config';
+import { OtpUtilsSingleton } from '@/singletons/otp.utils.singleton';
 import asyncHandler from '@/utils/asyncHandler.utils';
 import { type Request, type Response, type NextFunction } from 'express';
 
@@ -11,6 +13,36 @@ const AuthMiddleware = {
         res.status(409).json({ success: false, message: 'User already exist' });
         return;
       }
+      next();
+    }
+  ),
+  isUserExist: asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { email } = req.body;
+      const isUserExist = await prisma.user.findFirst({ where: { email } });
+      if (!isUserExist) {
+        res.status(404).json({ success: false, message: 'User not found' });
+        return;
+      }
+      next();
+    }
+  ),
+  checkSignupOtp: asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { email, otp } = req.body;
+      const hashedOtp = await redisClient.get(`user:otp:${email}`);
+      if (!hashedOtp) {
+        res
+          .status(400)
+          .json({ success: false, message: 'Otp has been expired' });
+        return;
+      }
+      const isMatched = OtpUtilsSingleton().compareOtp({ hashedOtp, otp });
+      if (!isMatched) {
+        res.status(400).json({ success: false, message: 'Invalid otp' });
+        return;
+      }
+      await redisClient.del(`user:otp:${email}`);
       next();
     }
   ),

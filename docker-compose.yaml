@@ -8,17 +8,20 @@ services:
       - backend_network
     volumes:
       - redis_volume:/data
-  redis-ui:
-    image: rediscommander/redis-commander:latest
-    container_name: redis_ui_container
-    environment:
-      - REDIS_HOSTS=local:redis:6379
+  postgresql:
+    image: postgres:16
+    container_name: postgres
     ports:
-      - 8081:8081
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=gadget_bajar
     networks:
       - backend_network
-    depends_on:
-      - redis
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   server:
     build:
       context: ./
@@ -30,12 +33,17 @@ services:
       - backend_network
     volumes:
       - './:/usr/src/app'
+      - /usr/src/app/node_modules
+    stop_grace_period: 8s
     depends_on:
-      # - database
-      - redis
+      - postgresql
+      - redis_container
+
 networks:
   backend_network:
     name: backend_network
     driver: bridge
+
 volumes:
+  postgres_data:
   redis_volume:

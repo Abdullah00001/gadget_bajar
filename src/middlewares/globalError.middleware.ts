@@ -1,10 +1,10 @@
 import { type NextFunction, type Request, type Response } from 'express';
 
 export const globalErrorMiddleware = (
-  err: Error,
-  req: Request,
+  _err: Error,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   res.status(500).json({
     status: 'error',

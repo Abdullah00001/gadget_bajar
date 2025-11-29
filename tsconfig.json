@@ -7,8 +7,8 @@
     // --- Environment Settings (Modern Node/Express) ---
     "target": "ES2022",
     "lib": ["ES2022"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
 
     // --- Alias/Path Settings ---
     "baseUrl": "./src",

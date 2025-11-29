@@ -1,15 +1,29 @@
 import logger from '@/configs/logger.configs';
 import mailTransporter from '@/configs/nodemailer.configs';
+// import mailTransporter from '@/configs/nodemailer.configs';
 import redisClient from '@/configs/redis.config';
+import signupOtpTemplate from '@/templates/signupOtpTemplate';
+import { TSignupOtpEmail } from '@/types/email.job.types';
 import mailOption from '@/utils/mailOption.utils';
+// import mailOption from '@/utils/mailOption.utils';
 import { Job, Worker } from 'bullmq';
 import Handlebars from 'handlebars';
+// import Handlebars from 'handlebars';
 
 const worker = new Worker(
   'email-queue',
   async (job: Job) => {
     const { name, data, id } = job;
     try {
+      if (name === 'send-signup-otp-email') {
+        const { email, expireAt, otp } = data as TSignupOtpEmail;
+        const template = Handlebars.compile(signupOtpTemplate);
+        const personalizedTemplate = template({ expireAt, otp });
+        await mailTransporter.sendMail(
+          mailOption(email, 'Email Verification Required', personalizedTemplate)
+        );
+        return;
+      }
     } catch (error) {
       logger.error('Worker job failed', { jobName: name, jobId: id, error });
       throw error;

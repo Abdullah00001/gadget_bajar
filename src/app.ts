@@ -8,6 +8,7 @@ import corsConfiguration from '@/configs/cors.configs';
 import { globalErrorMiddleware } from '@/middlewares/globalError.middleware';
 import { baseUrl } from '@/const';
 import v1Routes from '@/routes/v1';
+import '@/queue/index';
 
 const app: Express = express();
 

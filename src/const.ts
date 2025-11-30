@@ -149,3 +149,21 @@ export const productData = [
 export const CHAT_HISTORY_PREFIX = 'chat:history:';
 export const MAX_MESSAGES = 6;
 export const HISTORY_TTL = 86400;
+
+export enum PaymentStatus {
+  Pending = 'pending',
+  Paid = 'paid',
+  Failed = 'failed',
+}
+
+export enum OrderStatus {
+  Pending = 'pending',
+  Processing = 'processing',
+  Shipped = 'shipped',
+  Delivered = 'delivered',
+}
+
+export enum PaymentMethod {
+  Stripe = 'stripe',
+  Paypal = 'paypal',
+}

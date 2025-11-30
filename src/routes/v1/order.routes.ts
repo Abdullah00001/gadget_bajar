@@ -1,22 +1,22 @@
 import { Router } from 'express';
 import AuthMiddleware from '@/modules/middlewares/auth.middlewares';
 import validateRequest from '@/middlewares/validation.middlewares';
-import { chatBotSchema } from '@/modules/schemas/chatBot.schema';
-import ChatBotControllers from '@/modules/controllers/chatBot.controllers';
+import createOrderSchema from '@/modules/schemas/order.schema';
+import OrderControllers from '@/modules/controllers/order.controllers';
 
 const router = Router();
 
 const { checkAccessToken, checkRole } = AuthMiddleware;
-const { handleChat } = ChatBotControllers;
+const { handleCreateOrder } = OrderControllers;
 
-// Chat Bot Endpoint
+// Create Order Endpoint
 router
-  .route('/chatbot')
+  .route('/order')
   .post(
+    validateRequest(createOrderSchema),
     checkAccessToken,
     checkRole,
-    validateRequest(chatBotSchema),
-    handleChat
+    handleCreateOrder
   );
 
 export default router;

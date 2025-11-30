@@ -118,14 +118,13 @@ const AuthMiddleware = {
         });
       }
     } else {
-      if (role === 'USER') {
+      if (role === 'ADMIN' || role === 'USER') {
+        return next();
+      } else {
         return res.status(403).json({
           success: false,
-          message:
-            'Access Denied: Administrators must use dedicated admin panels.',
+          message: 'Access Denied: Invalid or unauthenticated role.',
         });
-      } else {
-        return next();
       }
     }
   },

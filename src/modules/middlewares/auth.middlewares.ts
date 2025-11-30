@@ -2,10 +2,12 @@ import prisma from '@/configs/database.config';
 import redisClient from '@/configs/redis.config';
 import { OtpUtilsSingleton } from '@/singletons/otp.utils.singleton';
 import asyncHandler from '@/utils/asyncHandler.utils';
+import JwtUtils from '@/utils/jwt.utils';
 import PasswordUtils from '@/utils/password.utils';
 import { type Request, type Response, type NextFunction } from 'express';
 
 const { comparePassword } = PasswordUtils;
+const { verifyAccessToken } = JwtUtils;
 
 const AuthMiddleware = {
   isSignupUserExist: asyncHandler(
@@ -63,6 +65,70 @@ const AuthMiddleware = {
       next();
     }
   ),
+  checkAccessToken: asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const authHeader = req.headers.authorization;
+      if (!authHeader && !authHeader?.startsWith('Bearer ')) {
+        res.status(401).json({
+          success: false,
+          message: 'Authorization header missing or malformed.',
+        });
+        return;
+      }
+      const token = authHeader?.split(' ')[1];
+      if (!token) {
+        res.status(401).json({
+          success: false,
+          message: 'Invalid token format.',
+        });
+        return;
+      }
+      const decoded = verifyAccessToken(token);
+      if (!decoded) {
+        res.status(401).json({
+          success: false,
+          message: 'Unauthorized Request: Invalid or expired token.',
+        });
+        return;
+      }
+      const user = await redisClient.get(`user:${decoded?.sub}`);
+      if (!user) {
+        res.status(401).json({
+          success: false,
+          message: 'Unauthorized Request: Invalid or expired token.',
+        });
+        return;
+      }
+      req.user = JSON.parse(user);
+      next();
+    }
+  ),
+  checkRole: (req: Request, res: Response, next: NextFunction) => {
+    const { role } = req.user;
+    const path = req.path;
+
+    if (path.startsWith('/admin')) {
+      if (role === 'ADMIN') {
+        return next();
+      } else {
+        return res.status(403).json({
+          success: false,
+          message:
+            'Access Denied: Users are not permitted to access administrative routes.',
+        });
+      }
+    } else {
+      if (role === 'USER') {
+        return res.status(403).json({
+          success: false,
+          message:
+            'Access Denied: Administrators must use dedicated admin panels.',
+        });
+      } else {
+        return next();
+      }
+    }
+  },
 };
 
 export default AuthMiddleware;

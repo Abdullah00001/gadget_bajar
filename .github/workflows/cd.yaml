@@ -3,7 +3,7 @@ name: CONTINUOUS DELIVERY AND DEPLOYMENT
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
 
 jobs:
   Lint-and-Test:
@@ -15,7 +15,7 @@ jobs:
       - name: Setup Nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: "22.14.0"
+          node-version: '22.14.0'
       - name: Install Dependencies
         run: npm ci
 
@@ -44,13 +44,13 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            abdullah00001/workly-contacts:${{github.ref_name}}
-            abdullah00001/workly-contacts:latest
+            abdullah00001/gadgetbajar:${{github.ref_name}}
+            abdullah00001/gadgetbajar:latest
 
-      - name: Install flyctl
-        run: |
-          curl -L https://fly.io/install.sh | sh
-          echo "$HOME/.fly/bin" >> $GITHUB_PATH
+      # - name: Install flyctl
+      #   run: |
+      #     curl -L https://fly.io/install.sh | sh
+      #     echo "$HOME/.fly/bin" >> $GITHUB_PATH
 
-      - name: Deploy to Render
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      # - name: Deploy to Render
+      #   run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}

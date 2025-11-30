@@ -1,3 +1,4 @@
+import { OrderStatus } from '@paypal/paypal-server-sdk';
 import { z } from 'zod';
 
 const createOrderSchema = z.object({
@@ -18,6 +19,16 @@ export type TOrderItem = TCreateOrderPayload['items'][number];
 
 export type TCreateOrder = TCreateOrderPayload & {
   userId: string;
+};
+
+export const updateOrderStatusSchema = z.object({
+  orderStatus: z.enum(Object.values(OrderStatus) as [string, ...string[]]),
+});
+
+export type TUpdateOrderStatusPayload = z.infer<typeof updateOrderStatusSchema>;
+
+export type TUpdateOrder = TUpdateOrderStatusPayload & {
+  orderId: string;
 };
 
 export default createOrderSchema;

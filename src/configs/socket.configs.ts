@@ -5,13 +5,16 @@ import { Server, Socket } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import redisClient from '@/configs/redis.config';
 import { socketCorsConfiguration } from '@/configs/cors.configs';
+import { socketAuthMiddleware } from '@/modules/middlewares/socket.middleware';
 
 let io: Server | null = null;
 
 export function initializeSocket(server: HTTPServer): Server {
   io = new Server(server, {
     cors: socketCorsConfiguration,
-    transports: ['websocket', 'polling'],
+    transports: ['polling', 'websocket'], // Try polling first
+    allowEIO3: true, // Support older Socket.IO versions
+    path: '/socket.io/', // Explicit path
   });
 
   // Set up Redis adapter for multi-server support
@@ -19,10 +22,13 @@ export function initializeSocket(server: HTTPServer): Server {
 
   io.adapter(createAdapter(redisClient, subClient));
 
+  io.use(socketAuthMiddleware);
   // Connection handler
   io.on('connection', (socket: Socket) => {
+    const userId = socket.data.userId;
     console.log(`Client connected: ${socket.id}`);
-
+    socket.join(`user:${userId}`);
+    console.log(`✅ User ${userId} auto-joined room: user:${userId}`);
     // Join user-specific room
     socket.on('join:user', (userId: string) => {
       socket.join(`user:${userId}`);

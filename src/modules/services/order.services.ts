@@ -1,6 +1,11 @@
 import prisma from '@/configs/database.config';
+import { getIO } from '@/configs/socket.configs';
 import { OrderStatus, PaymentMethod, PaymentStatus } from '@/const';
-import { TCreateOrder, TOrderItem } from '@/modules/schemas/order.schema';
+import {
+  TCreateOrder,
+  TOrderItem,
+  TUpdateOrder,
+} from '@/modules/schemas/order.schema';
 import {
   createMockPaypalOrder,
   createMockStripePaymentIntent,
@@ -13,7 +18,6 @@ const OrderServices = {
     userId,
   }: TCreateOrder) => {
     try {
-      console.log(items, paymentMethod, userId);
       const totalAmount = items.reduce((sum: number, item: TOrderItem) => {
         const { price, quantity } = item;
         return sum + price * quantity;
@@ -39,6 +43,35 @@ const OrderServices = {
     } catch (error) {
       if (error instanceof Error) throw error;
       throw new Error('Unknown error occurred in create order service');
+    }
+  },
+  processAdminRetrieveOrders: async () => {
+    try {
+      const data = await prisma.order.findMany();
+      return data;
+    } catch (error) {
+      if (error instanceof Error) throw error;
+      throw new Error('Unknown error occurred in admin retrieve order service');
+    }
+  },
+  processAdminChangeOrderStatus: async ({
+    orderId,
+    orderStatus,
+  }: TUpdateOrder) => {
+    try {
+      const order = await prisma.order.update({
+        where: { id: orderId },
+        data: { orderStatus },
+      });
+      const io = getIO();
+      io.to(`user:${order.userId}`).emit('orderUpdate', {
+        orderId: order.id,
+        orderStatus: order.orderStatus,
+        message: `Order ${orderStatus}`,
+      });
+    } catch (error) {
+      if (error instanceof Error) throw error;
+      throw new Error('Unknown error occurred in admin retrieve order service');
     }
   },
 };

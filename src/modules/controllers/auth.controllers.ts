@@ -2,7 +2,7 @@ import asyncHandler from '@/utils/asyncHandler.utils';
 import { type Request, type Response, type NextFunction } from 'express';
 import AuthServices from '../services/auth.services';
 
-const { processSignup, processVerifyUser } = AuthServices;
+const { processSignup, processVerifyUser, processLogin } = AuthServices;
 
 const AuthControllers = {
   handleSignup: asyncHandler(
@@ -31,6 +31,18 @@ const AuthControllers = {
       res.status(200).json({
         success: true,
         message: 'Account verification successful',
+      });
+      return;
+    }
+  ),
+  handleLogin: asyncHandler(
+    async (req: Request, res: Response, _next: NextFunction) => {
+      const user = req.user;
+      const accessToken = await processLogin(user);
+      res.status(200).json({
+        success: true,
+        message: 'Login successful',
+        accessToken,
       });
       return;
     }

@@ -19,7 +19,7 @@ const PasswordUtils = {
   comparePassword: async (
     requestedPassword: string,
     hashPassword: string
-  ): Promise<boolean | null> => {
+  ): Promise<boolean> => {
     try {
       return await bcrypt.compare(requestedPassword, hashPassword);
     } catch (error) {
@@ -27,10 +27,10 @@ const PasswordUtils = {
         logger.warn(
           `Error Occurred In Compare Password Utils: ${error.message}`
         );
-        return null;
+        throw error;
       } else {
         logger.warn('Unexpected Error Occurred In Compare Password Utils');
-        return null;
+        throw new Error('Unexpected Error Occurred In Compare Password Utils');
       }
     }
   },

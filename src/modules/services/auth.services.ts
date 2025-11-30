@@ -5,13 +5,16 @@ import PasswordUtils from '@/utils/password.utils';
 import { OtpUtilsSingleton } from '@/singletons/otp.utils.singleton';
 import CalculationUtils from '@/utils/calculation.utils';
 import redisClient from '@/configs/redis.config';
-import { otpExpireAt } from '@/const';
+import { accessTokenExpiresIn, otpExpireAt } from '@/const';
 import EmailQueueJobs from '@/queue/jobs/email.jobs';
+import { TUser } from '@/types/express';
+import JwtUtils from '@/utils/jwt.utils';
 
 const { hashPassword } = PasswordUtils;
-const { calculateMilliseconds } = CalculationUtils;
+const { calculateMilliseconds, expiresInTimeUnitToMs } = CalculationUtils;
 const { addSendSignupOtpEmailToQueue, addVerifyUserAccountEmailToQueue } =
   EmailQueueJobs;
+const { generateAccessToken } = JwtUtils;
 
 const AuthServices = {
   processSignup: async ({ email, name, password }: TSignupPayload) => {
@@ -56,7 +59,25 @@ const AuthServices = {
       await addVerifyUserAccountEmailToQueue({ email });
     } catch (error) {
       if (error instanceof Error) throw error;
-      throw new Error('Unknown error occurred in signup service');
+      throw new Error('Unknown error occurred in verify account service');
+    }
+  },
+  processLogin: async (user: TUser) => {
+    try {
+      const accessToken = generateAccessToken({
+        role: user.role,
+        sub: user.id,
+      });
+      await redisClient.set(
+        `user:${user.id}`,
+        JSON.stringify(user),
+        'PX',
+        expiresInTimeUnitToMs(accessTokenExpiresIn)
+      );
+      return accessToken;
+    } catch (error) {
+      if (error instanceof Error) throw error;
+      throw new Error('Unknown error occurred in login service');
     }
   },
 };

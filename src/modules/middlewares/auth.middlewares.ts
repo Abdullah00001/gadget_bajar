@@ -2,7 +2,10 @@ import prisma from '@/configs/database.config';
 import redisClient from '@/configs/redis.config';
 import { OtpUtilsSingleton } from '@/singletons/otp.utils.singleton';
 import asyncHandler from '@/utils/asyncHandler.utils';
+import PasswordUtils from '@/utils/password.utils';
 import { type Request, type Response, type NextFunction } from 'express';
+
+const { comparePassword } = PasswordUtils;
 
 const AuthMiddleware = {
   isSignupUserExist: asyncHandler(
@@ -24,6 +27,8 @@ const AuthMiddleware = {
         res.status(404).json({ success: false, message: 'User not found' });
         return;
       }
+      const { accountStatus, id, name, password, role } = isUserExist;
+      req.user = { accountStatus, id, name, password, role, email };
       next();
     }
   ),
@@ -43,6 +48,18 @@ const AuthMiddleware = {
         return;
       }
       await redisClient.del(`user:otp:${email}`);
+      next();
+    }
+  ),
+  checkPassword: asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { password } = req.body;
+      const hashedPassword = req.user.password;
+      const isMatched = await comparePassword(password, hashedPassword);
+      if (!isMatched) {
+        res.status(400).json({ success: false, message: 'Invalid credential' });
+        return;
+      }
       next();
     }
   ),

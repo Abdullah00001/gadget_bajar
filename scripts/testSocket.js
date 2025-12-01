@@ -1,6 +1,6 @@
 const io = require('socket.io-client');
 
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjU0OWZjN2RmLThiMWUtNGQzNS1iNjNhLTg0ZmQyYjc4ZDU1YyIsImlhdCI6MTc2NDUxNDY2NiwiZXhwIjoxNzY0NjAxMDY2fQ.WP8_bv6P1TM8qTZtzOMXnH25tyflzU8LndUwKSfjTmo';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjU0OWZjN2RmLThiMWUtNGQzNS1iNjNhLTg0ZmQyYjc4ZDU1YyIsImlhdCI6MTc2NDU4NTEyMywiZXhwIjoxNzY0NjcxNTIzfQ.WuWGt6OZDlUR1tpccRTLWTxOVYw8JLP4fjhcHjv8Xco';
 
 const socket = io('http://localhost:5000', {
   auth: { token }

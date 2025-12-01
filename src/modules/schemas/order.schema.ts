@@ -1,4 +1,4 @@
-import { OrderStatus } from '@paypal/paypal-server-sdk';
+import { OrderStatus } from '@/const';
 import { z } from 'zod';
 
 const createOrderSchema = z.object({

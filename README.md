@@ -1,60 +1,99 @@
-# Gadget Bajar – Setup Steps
+# Gadget Bajar
 
-## 1. Clone the repository
+🔗 **Live Demo:** [https://gadget-bajar.onrender.com](https://gadget-bajar.onrender.com)
 
-Clone the Gadget Bajar project into your local machine.
+🔗 **Postman Collection:** [https://drive.google.com/file/d/1rQNtvYVD01BXWnmIsEFCWSaNQIx6al4T/view?usp=sharing](https://drive.google.com/file/d/1rQNtvYVD01BXWnmIsEFCWSaNQIx6al4T/view?usp=sharing)
 
-## 2. Create a `.env` file
+## Clone the Repository
 
-Add all required environment variables:
-
-```
-    DATABASE_URL=postgresql://root:root@postgresql:5432/gadget_bajar?schema=public
-    NODE_ENV=development
-    PORT=5000
-    REDIS_URL=redis://redis:6379
-    SMTP_HOST=smtp.gmail.com
-    SMTP_PORT=587
-    SMTP_USER=abdullahbinomarchowdhury02@gmail.com
-
-    SMTP_PASS=uhorumnkqkgqftts
-    JWT_ACCESS_TOKEN_SECRET_KEY=
-    OTP_HASH_SECRET=
-    GROQ_API_KEY=
+```bash
+https://github.com/Abdullah00001/gadget_bajar.git
+cd gadget_bajar
 ```
 
-## 3. Ensure Docker & Docker Compose are installed
+## Set Up Environment Variables
 
-Install Docker Engine + Docker Compose on your system.
+Create a `.env` file in the root directory:
 
-## 4. Start all services
+```bash
+cp .env.example .env
+```
 
-Run the following command:
+Edit the `.env` file and add your configuration:
+
+```env
+# Database
+DATABASE_URL="postgresql://root:root@postgresql:5432/gadget_bajar"
+
+# App
+NODE_ENV=production
+PORT=5000
+
+# Redis
+REDIS_URL="redis://redis:6379"
+
+# SMTP / Email
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=demo_email@example.com
+SMTP_PASS=demo_smtp_password_here
+
+# JWT / Auth
+JWT_ACCESS_TOKEN_SECRET_KEY=demo_jwt_secret_key_123456789
+OTP_HASH_SECRET=demo_otp_hash_secret_key_987654321
+
+# External APIs
+GROQ_API_KEY=gsk_demo_api_key_123456789
 
 ```
+
+## Installation
+
+This project uses Docker Compose for consistent development environments across all machines. Docker is **required** to run this application.
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Docker Desktop** (version 20.10 or higher)
+  - [Install Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
+  - [Install Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
+  - [Install Docker Desktop for Linux](https://docs.docker.com/desktop/install/linux-install/)
+- **Node.js** (version 18.x or higher) - for local development tools only
+
+## Scripts
+
+| Script          | Description                          |
+| --------------- | ------------------------------------ |
+| `npm run dev`   | Run in development mode with nodemon |
+| `npm run build` | Compile TypeScript to JavaScript     |
+| `npm run start` | Start production server              |
+| `npm run lint`  | Lint code with ESLint                |
+| `npm run test`  | Run unit and integration tests       |
+| `prisma:generate`  | Run unit and integration tests       |
+| `prisma:migrate`  | Run unit and integration tests       |
+
+## Install Dependencies
+
+```bash
+npm install
+```
+
+## Start the Application with Docker Compose
+
+```bash
 docker-compose up --build
 ```
-
-## 7. Apply database migrations
-
-```
-docker compose exec server npx prisma migrate dev
-docker compose exec server npx prisma generate
-npx prisma migrate dev (for local)
-npx prisma generate (for local)
-```
-
 ---
 
-# Gadget Bajar API Documentation
+## Gadget Bajar API Documentation
 
 ## Auth Endpoints
 
 | Route          | Method | Description          |
 | -------------- | ------ | -------------------- |
-| `/auth/signup` | POST   | User registration    |
-| `/auth/verify` | POST   | Verify user with OTP |
-| `/auth/login`  | POST   | User login           |
+| `/auth/signup` | POST   | Only User registration    |
+| `/auth/login`  | POST   | User & Admin login           |
 
 ## Chat Bot
 
@@ -73,12 +112,14 @@ npx prisma generate (for local)
 | Route                     | Method | Description            |
 | ------------------------- | ------ | ---------------------- |
 | `/payment/webhook/stripe` | POST   | Stripe payment webhook |
+| `/payment/webhook/paypal` | POST   | Paypal payment webhook |
 
 ## Admin
 
 | Route              | Method | Description         |
 | ------------------ | ------ | ------------------- |
 | `/admin/order/:id` | PATCH  | Update order status |
+| `/admin/order` | GET  | Get all orders |
 
 ## Health Check
 
@@ -86,16 +127,16 @@ npx prisma generate (for local)
 | --------- | ------ | ------------------- |
 | `/health` | GET    | Server health check |
 
-## Notification
-
-| Route         | Method | Description                     |
-| ------------- | ------ | ------------------------------- |
-| `/socket.io/` | GET    | Socket.IO connection with token |
 
 ---
 
-### Run the server on local machine then via postman first signup then login then copy the jwt token,the go to the project on vs code and open scripts folder and paste the jwt token on testSocket.js file token object literal open another terminal and run node ./scripts/tstSocket.js
+## Webhook Testing Steps
+since bangladesh didn't have paypal and stripe thats why i cant get the sandbox,thats why i mock webhooks.
 
-its will create a connection with server
+- first open postman and import given postman collection you can found at the top of readme
+- then create an account
+- then login
+- then create an order.order endpoint response will have webhook payload,copy the payload 
+- then in payment folder you will found stripe and paypal webhook in body just paste the copied payload and send the request.
 
-now when webhook api or admin change order status its will show the live notifications
+its will complete the payment

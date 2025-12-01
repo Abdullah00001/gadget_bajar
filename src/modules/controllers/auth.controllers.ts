@@ -2,7 +2,7 @@ import asyncHandler from '@/utils/asyncHandler.utils';
 import { type Request, type Response, type NextFunction } from 'express';
 import AuthServices from '../services/auth.services';
 
-const { processSignup, processVerifyUser, processLogin } = AuthServices;
+const { processSignup, processLogin } = AuthServices;
 
 const AuthControllers = {
   handleSignup: asyncHandler(
@@ -12,7 +12,7 @@ const AuthControllers = {
       res.status(201).json({
         success: true,
         message:
-          'Signup successful,Please check your email we send you a verification code for verify your account',
+          'Signup successful,You can login now.',
         user: {
           name,
           email,
@@ -20,17 +20,6 @@ const AuthControllers = {
           role: data.role,
           accountStatus: data.accountStatus,
         },
-      });
-      return;
-    }
-  ),
-  handleVerifyUser: asyncHandler(
-    async (req: Request, res: Response, _next: NextFunction) => {
-      const { email } = req.body;
-      await processVerifyUser({ email });
-      res.status(200).json({
-        success: true,
-        message: 'Account verification successful',
       });
       return;
     }

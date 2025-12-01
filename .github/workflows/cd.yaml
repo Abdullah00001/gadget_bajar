@@ -2,8 +2,8 @@ name: CONTINUOUS DELIVERY AND DEPLOYMENT
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
   Lint-and-Test:
@@ -46,11 +46,5 @@ jobs:
           tags: |
             abdullah00001/gadgetbajar:${{github.ref_name}}
             abdullah00001/gadgetbajar:latest
-
-      # - name: Install flyctl
-      #   run: |
-      #     curl -L https://fly.io/install.sh | sh
-      #     echo "$HOME/.fly/bin" >> $GITHUB_PATH
-
-      # - name: Deploy to Render
-      #   run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      - name: Deploy to Render
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}

@@ -33,9 +33,8 @@ app.use(
 app.use(baseUrl.v1, v1Routes);
 // Health Route
 app.get('/health', (_req: Request, res: Response) => {
-  setTimeout(() => {
-    res.status(200).json({ message: 'Server Is Running' });
-  }, 6000);
+  res.status(200).json({ message: 'Server Is Running' });
+  return;
 });
 // Route Not Found
 app.use((req: Request, res: Response) => {

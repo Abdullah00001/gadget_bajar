@@ -14,9 +14,7 @@ const logger = createLogger({
     json(),
     loggerFormat
   ),
-  transports: [
-    new transports.Console(),
-  ],
+  transports: [new transports.Console()],
 });
 
 export default logger;

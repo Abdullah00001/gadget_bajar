@@ -9,4 +9,7 @@ export const env: IEnvConfig = {
   SMTP_PORT: parseInt(getEnvVariable('SMTP_PORT')),
   SMTP_USER: getEnvVariable('SMTP_USER'),
   SMTP_PASS: getEnvVariable('SMTP_PASS'),
+  JWT_ACCESS_TOKEN_SECRET_KEY: getEnvVariable('JWT_ACCESS_TOKEN_SECRET_KEY'),
+  OTP_HASH_SECRET: getEnvVariable('OTP_HASH_SECRET'),
+  GROQ_API_KEY: getEnvVariable('GROQ_API_KEY'),
 };

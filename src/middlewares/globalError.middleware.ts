@@ -6,6 +6,7 @@ export const globalErrorMiddleware = (
   res: Response,
   _next: NextFunction
 ) => {
+  console.log(_err);
   res.status(500).json({
     status: 'error',
     message: 'Internal server error',

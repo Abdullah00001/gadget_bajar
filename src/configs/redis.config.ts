@@ -4,9 +4,6 @@ import { Redis } from 'ioredis';
 const redisClient = new Redis(env.REDIS_URL, {
   maxRetriesPerRequest: null,
   lazyConnect: false,
-  tls:{
-    rejectUnauthorized: false
-  }
 });
 
 redisClient.on('connect', () => {

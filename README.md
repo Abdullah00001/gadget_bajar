@@ -84,6 +84,12 @@ npm install
 ```bash
 docker-compose up --build
 ```
+
+## Migration Apply
+
+```bash
+docker compose exec server npx prisma migrate deploy
+```
 ---
 
 ## Gadget Bajar API Documentation

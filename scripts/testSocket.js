@@ -1,11 +1,8 @@
 const io = require('socket.io-client');
 
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6ImI0NzI5MTJjLTUwNzktNGJiNS1iMDU0LWUwMzg0ZjkyYWJmZSIsImlhdCI6MTc2NDYwNzA5NSwiZXhwIjoxNzY0NjkzNDk1fQ.uZVDn8vWIFrbq4DYLhGyaSp_g_Fekaiim4m4ABNtLBc';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjU0OWZjN2RmLThiMWUtNGQzNS1iNjNhLTg0ZmQyYjc4ZDU1YyIsImlhdCI6MTc2NDU4NTEyMywiZXhwIjoxNzY0NjcxNTIzfQ.WuWGt6OZDlUR1tpccRTLWTxOVYw8JLP4fjhcHjv8Xco';
 
-const socket = io('https://gadget-bajar.onrender.com', {
-  path: '/socket.io/',
-  // Explicitly list transports to ensure WebSocket is attempted first
-  transports: ['polling'],
+const socket = io('http://localhost:5000', {
   auth: { token }
 });
 
